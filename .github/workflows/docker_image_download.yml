@@ -8,10 +8,10 @@ on:
         description: "Docker image to download (e.g., nginx:latest)"
         required: true
         default: "nginx:latest"
-      skip_cleanup:
-        description: "Whether to skip disk space cleanup (true or false)"
-        required: false
-        default: "true"
+      cleanup:
+        description: "Whether to clean up disk space (true or false)"
+        required: true
+        default: "false"
 
 jobs:
   download:
@@ -28,7 +28,7 @@ jobs:
           echo "SAFE_NAME=${SAFE_NAME}" >> $GITHUB_ENV
 
       - name: Free Disk Space (Ubuntu)
-        if: ${{ inputs.skip_cleanup != 'true' }}
+        if: ${{ inputs.cleanup == 'true' }}
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
           # this might remove tools that are actually needed,
