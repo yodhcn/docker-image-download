@@ -11,7 +11,7 @@ on:
       skip_cleanup:
         description: "Whether to skip disk space cleanup (true or false)"
         required: false
-        default: "false"
+        default: "true"
 
 jobs:
   download:
