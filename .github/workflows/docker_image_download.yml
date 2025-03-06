@@ -1,0 +1,34 @@
+name: docker_image_download
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Docker image to download (e.g., nginx:latest)"
+        required: true
+        default: "nginx:latest"
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull image
+        run: |
+          docker pull ${{ inputs.image }}
+
+      - name: generate filename
+        id: filename
+        run: |
+          SAFE_NAME=$(echo "${{ inputs.image }}" | sed 's/[\/:]/_/g')
+          echo "SAFE_NAME=${SAFE_NAME}" >> $GITHUB_ENV
+
+      - name: save image
+        run: |
+          docker save ${{ inputs.image }} > ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SAFE_NAME }}
+          path: ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar
