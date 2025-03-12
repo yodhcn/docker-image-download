@@ -22,9 +22,13 @@ jobs:
           IMAGE_NAME="${{ inputs.image }}"
           IMAGE_NAME_NO_TAG=$(echo "$IMAGE_NAME" | cut -d ':' -f1)
           TAR_NAME=$(echo "$IMAGE_NAME_NO_TAG" | sed 's#/#_#g').tar
-          echo $TAR_NAME
+          echo "$TAR_NAME"
 
-      - name: Free Disk Space (Ubuntu)
+      - name: Upload artifact
+        run: |
+          echo ./docker-drag/"$TAR_NAME".tar       
+
+      # - name: Free Disk Space (Ubuntu)
         if: ${{ inputs.cleanup == 'true' }}
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
@@ -41,19 +45,19 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      - name: Clone source code
+      # - name: Clone source code
         env:
           REPO_URL: https://github.com/NotGlop/docker-drag
           REPO_BRANCH: master
         run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH docker-drag
 
-      - name: Download image
-        working-directory: ./docker-drag
-        run: |
-          python3 docker_pull.py ${{ inputs.image }}
+      # - name: Download image
+      #   working-directory: ./docker-drag
+      #   run: |
+      #     python3 docker_pull.py ${{ inputs.image }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TAR_NAME }}
-          path: ./docker-drag/${{ env.TAR_NAME }}.tar
+          name: "$TAR_NAME"
+          path: ./docker-drag/"$TAR_NAME".tar
