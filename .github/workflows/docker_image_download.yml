@@ -57,4 +57,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.TAR_NAME }}
-          path: ./docker-drag/${{ env.TAR_NAME }}.tar
+          path: ./docker-drag/${{ env.TAR_NAME }}
