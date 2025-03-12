@@ -17,6 +17,13 @@ jobs:
   download:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate filename
+        run: |
+          IMAGE_NAME="${{ inputs.image }}"
+          IMAGE_NAME_NO_TAG=$(echo "$IMAGE_NAME" | cut -d ':' -f1)
+          TAR_NAME=$(echo "$IMAGE_NAME_NO_TAG" | sed 's#/#_#g').tar
+          echo $TAR_NAME
+
       - name: Free Disk Space (Ubuntu)
         if: ${{ inputs.cleanup == 'true' }}
         uses: jlumbroso/free-disk-space@v1.3.1
@@ -45,8 +52,8 @@ jobs:
         run: |
           python3 docker_pull.py ${{ inputs.image }}
 
-      # - name: upload artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ${{ env.SAFE_NAME }}
-      #     path: ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TAR_NAME }}
+          path: ./docker-drag/${{ env.TAR_NAME }}.tar
