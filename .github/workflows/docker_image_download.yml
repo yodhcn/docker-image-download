@@ -17,39 +17,41 @@ jobs:
   download:
     runs-on: ubuntu-latest
     steps:
+      - name: generate filename
+        id: filename
+        run: |
+          SAFE_NAME=$(echo "${{ inputs.image }}" | sed 's/[\/:]/_/g')
+          echo "SAFE_NAME=${SAFE_NAME}" >> $GITHUB_ENV
+
       - name: Generate filename
         run: |
           IMAGE_NAME="${{ inputs.image }}"
           IMAGE_NAME_NO_TAG=$(echo "$IMAGE_NAME" | cut -d ':' -f1)
           TAR_NAME=$(echo "$IMAGE_NAME_NO_TAG" | sed 's#/#_#g').tar
-          echo "$TAR_NAME"
-
-      - name: Upload artifact
-        run: |
-          echo ./docker-drag/"$TAR_NAME".tar       
+          echo "TAR_NAME=${TAR_NAME}" >> $GITHUB_ENV
 
       # - name: Free Disk Space (Ubuntu)
-        if: ${{ inputs.cleanup == 'true' }}
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: true
+      #   if: ${{ inputs.cleanup == 'true' }}
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     # this might remove tools that are actually needed,
+      #     # if set to "true" but frees about 6 GB
+      #     tool-cache: true
 
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+      #     # all of these default to true, but feel free to set to
+      #     # "false" if necessary for your workflow
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
 
       # - name: Clone source code
-        env:
-          REPO_URL: https://github.com/NotGlop/docker-drag
-          REPO_BRANCH: master
-        run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH docker-drag
+      #   env:
+      #     REPO_URL: https://github.com/NotGlop/docker-drag
+      #     REPO_BRANCH: master
+      #   run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH docker-drag
 
       # - name: Download image
       #   working-directory: ./docker-drag
@@ -59,5 +61,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "$TAR_NAME"
-          path: ./docker-drag/"$TAR_NAME".tar
+          name: ${{ env.TAR_NAME }}
+          path: ./docker-drag/${{ env.TAR_NAME }}.tar
