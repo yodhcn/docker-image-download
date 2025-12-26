@@ -8,6 +8,10 @@ on:
         description: "Docker image to download (e.g., nginx:latest)"
         required: true
         default: "nginx:latest"
+      platform_arm:
+        description: "Run on arm64 runner (true = arm64, false = amd64)"
+        required: true
+        default: "false"
       cleanup:
         description: "Whether to clean up disk space (true or false)"
         required: true
@@ -15,7 +19,7 @@ on:
 
 jobs:
   download:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.platform_arm == 'true' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Free Disk Space (Ubuntu)
         if: ${{ inputs.cleanup == 'true' }}
