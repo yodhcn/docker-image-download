@@ -21,6 +21,12 @@ jobs:
   download:
     runs-on: ${{ inputs.platform_arm == 'true' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
+      - name: Print workflow inputs
+        run: |
+          echo "image        = ${{ inputs.image }}"
+          echo "platform_arm = ${{ inputs.platform_arm }}"
+          echo "cleanup      = ${{ inputs.cleanup }}"
+
       - name: Free Disk Space (Ubuntu)
         if: ${{ inputs.cleanup == 'true' }}
         uses: jlumbroso/free-disk-space@v1.3.1
