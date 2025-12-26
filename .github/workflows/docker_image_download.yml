@@ -46,6 +46,9 @@ jobs:
         id: filename
         run: |
           SAFE_NAME=$(echo "${{ inputs.image }}" | sed 's/[\/:]/_/g')
+          if [ "${{ inputs.platform_arm }}" = "true" ]; then
+            SAFE_NAME="${SAFE_NAME}_arm"
+          fi
           echo "SAFE_NAME=${SAFE_NAME}" >> $GITHUB_ENV
 
       - name: save image
