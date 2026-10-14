@@ -59,13 +59,10 @@ jobs:
 
       - name: save image
         run: |
-          set -euo pipefail
-          if command -v pigz >/dev/null 2>&1; then comp=pigz; else comp=gzip; fi
-          echo "compressing with $comp"
-          docker save "${{ inputs.image }}" | "$comp" > "${{ runner.temp }}/${{ env.SAFE_NAME }}.tar.gz"
+          docker save ${{ inputs.image }} > ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.SAFE_NAME }}
-          path: ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar.gz
+          path: ${{ runner.temp }}/${{ env.SAFE_NAME }}.tar
